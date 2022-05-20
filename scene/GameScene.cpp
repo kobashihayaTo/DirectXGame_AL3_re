@@ -4,6 +4,9 @@
 
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+
+#include <random>
+
 #define PI 3.14
 
 GameScene::GameScene() {}
@@ -17,6 +20,7 @@ float GameScene::Angle(float angle)
 {
 	return angle * PI / 180;
 }
+
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -28,8 +32,25 @@ void GameScene::Initialize() {
 	// 3Dモデルの生成
 	model_ = Model::Create();
 
+	//乱数シード生成器
+	std::random_device seed_gen;
+	//メルセデス・ツイスターの乱数エンジン
+	std::mt19937_64 engine(seed_gen());
+	//乱数範囲の指定(回転と座標)
+	std::uniform_real_distribution<float> rotation(0, 2*PI);//回転
+	std::uniform_real_distribution<float> coordinate(-10, +10);//座標
+	//乱数エンジンを渡し、指定範囲っからランダムな数値を得る
+	
+
+	for(WorldTransform& worldTransform_:worldTransforms_)
+	{
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
+	//カメラ視点座標を設定
+	/*viewProjection_.eye = { 0,0,-10 };*/
+	viewProjection_.target = { 10,0,0 };//注視点
+	//カメラ上方向のベクトルを設定
+	viewProjection_.up = { cosf(PI / 4.0f),sinf(PI / 4.0f),0.0f };
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
@@ -39,20 +60,20 @@ void GameScene::Initialize() {
 	//軸方向表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示の参照するビュープロジェクションを指定する
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	//ライン描画が参照するビュープロジェクションを指定する
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
 	//X,Y,Z方向にスケーリングを設定
-	worldTransform_.scale_ = { 5,5,5 };
+	worldTransform_.scale_ = { 1,1,1 };
 
 	//x,y,z軸周りの回転角を設定
-	worldTransform_.rotation_ = { Angle(45.0),Angle(45.0),0.0f};
+	worldTransform_.rotation_ = { rotation(engine),rotation(engine),rotation(engine) };
 
 	//x,y,z軸周りの平行移動を設定
-	worldTransform_.translation_ = { 0,10,0 };
-	
+	worldTransform_.translation_ = { coordinate(engine), coordinate(engine), coordinate(engine) };
+
 	//スケーリング行列を宣言
 	Matrix4 matScale;
 
@@ -62,7 +83,7 @@ void GameScene::Initialize() {
 	  0,0,Sz,0
 	  0,0,0,1
 	  */
-	//スケーリングの設定
+	  //スケーリングの設定
 	matScale.m[0][0] = worldTransform_.scale_.x;
 	matScale.m[1][1] = worldTransform_.scale_.y;
 	matScale.m[2][2] = worldTransform_.scale_.z;
@@ -84,7 +105,7 @@ void GameScene::Initialize() {
 	Matrix4 matRot = matIdentity;
 	//各種用回転行列を宣言
 	Matrix4 matRotZ, matRotX, matRotY;
-		
+
 #pragma 
 
 	/*
@@ -132,10 +153,10 @@ void GameScene::Initialize() {
 	/*worldTransform_.matWorld_ *= matRotZ*/;//Z軸周りの回転
 	//worldTransform_.matWorld_ *= matRotX;//X軸周りの回転
 	/*worldTransform_.matWorld_ *= matRotY*/;//Y軸周りの回転
-	
+
 
 	//各種の回転行列の合成
-	matRot *= matRotZ; 
+	matRot *= matRotZ;
 	matRot *= matRotX;
 	matRot *= matRotY;
 	worldTransform_.matWorld_ = matIdentity;
@@ -166,7 +187,7 @@ void GameScene::Initialize() {
 	matTrans.m[2][3] = 0;
 #pragma endregion
 	//worldTransform_.matWorld_ = matIdentity;
-	
+
 
 	//行列の合成
 	worldTransform_.matWorld_ *= matScale;//スケーリング
@@ -174,9 +195,50 @@ void GameScene::Initialize() {
 	worldTransform_.matWorld_ *= matTrans;//平行移動
 	//行列の転送
 	worldTransform_.TransferMatrix();
+	}
 }
 
-void GameScene::Update() { debugCamera_->Update(); }
+void GameScene::Update() 
+{ /*debugCamera_->Update();*/
+	//視点の移動ベクトル
+	Vector3 move = { 0,0,0 };
+
+	//視点の移動速さ
+	/*const float KEyeSpeed = 0.2f;*/
+
+	//注視点の移動速さ
+	/*const float ktargetSpeed = 0.2f;*/
+
+	//上方向の回転速さ[ラジアン/frame]
+	const float kUpRotSpeed = 0.05f;
+	//押した方向で移動ベクトルを変更
+	/*if (input_->PushKey(DIK_W)) {
+		move.z += ktargetSpeed;
+	}else if (input_->PushKey(DIK_S)) {
+		move.z -= ktargetSpeed;
+	}*/
+	if (input_->PushKey(DIK_SPACE)){
+		viewAngle += kUpRotSpeed;
+		//2πを越えたら0に戻す
+		viewAngle = fmodf(viewAngle, PI * 2.0f);
+	}
+	//視点移動(ベクトルの加算)
+	/*viewProjection_.target += move;*/
+	//行列の再計算
+	/*viewProjection_.UpdateMatrix();*/
+
+	//上方向ベクトルを計算(半径1の円周上の座標
+	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
+	//行列の再計算
+	viewProjection_.UpdateMatrix();
+	//デバック用表示
+	/*debugText_->SetPos(50, 50);
+	debugText_->Printf(
+		"target;(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);*/
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+		"up;(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+}
 
 void GameScene::Draw() {
 
@@ -205,8 +267,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 3Dモデル描画
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	for (WorldTransform& worldTransform_ : worldTransforms_) {
+		model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
+	}
+	
 	//ライン描画が参照するビュープロジェクションを指定する
 	PrimitiveDrawer::GetInstance()->DrawLine3d({ 0, 0, 0 },{ 0, 10, 0 }, { 0, 1, 0, 1 });
 		
