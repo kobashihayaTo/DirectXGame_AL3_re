@@ -54,6 +54,10 @@ public: // メンバ関数
 	void Draw();
 
 	float Angle(float angle);
+
+	/*float MinNum(float num, float num2);
+	float MaxNum(float num, float num2);*/
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
