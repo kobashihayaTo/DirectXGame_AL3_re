@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Player.h"
 
 #include "DebugCamera.h"
 /// <summary>
@@ -16,16 +17,21 @@
 /// </summary>
 class GameScene {
 
-	// 3Dモデル
-	Model* model_ = nullptr;
-	//ワールドトランスフォーム
-	WorldTransform worldTransforms_[100];
-	//ビュープロジェクション
-	ViewProjection viewProjection_;
-	//デバックカメラ
-	DebugCamera* debugCamera_ = nullptr;
-	//カメラ上方向の角度
-	float viewAngle = 0.0f;
+public:
+	//パーツID
+	enum PartId {
+		kRoot, //大元
+		kSpine,//脊髄
+		kChest,//胸
+		kHead,//頭
+		kArmL, //左腕
+		kArmR, //右腕
+		kHip,  //尻
+		kLegL, //左足
+		kLegR, //右足
+
+		kNumPartId
+	};
 
 public: // メンバ関数
   /// <summary>
@@ -55,9 +61,6 @@ public: // メンバ関数
 
 	float Angle(float angle);
 
-	/*float MinNum(float num, float num2);
-	float MaxNum(float num, float num2);*/
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -69,4 +72,9 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	// 3Dモデル
+	Model* model_ = nullptr;
+	Player* player_ = nullptr;
+	//ビュープロジェクション
+	ViewProjection viewProjection_;
 };
