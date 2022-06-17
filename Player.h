@@ -6,6 +6,9 @@
 #include <cassert>
 #include <PlayerBullet.h>
 
+#include <memory>
+#include <list>
+
 #pragma once
 
 
@@ -53,7 +56,7 @@ private:
 	DebugText* debugText_ = nullptr;
 
 	//弾
-	PlayerBullet* bullet_ = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>>bullets_;
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 };

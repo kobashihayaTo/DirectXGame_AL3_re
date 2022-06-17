@@ -13,14 +13,14 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 }
 
-void Player::Update() 
+void Player::Update()
 {
 	//ÉLÉÉÉâÉNÉ^Å[ÇÃà⁄ìÆÉxÉNÉgÉã
 	Vector3 move = { 0,0,0 };
 
 	const float kCharacterSpeed = 0.2f;
-	
-	
+
+
 	if (input_->PushKey(DIK_RIGHT)) {
 		move = { kCharacterSpeed,0,0 };
 	}
@@ -36,7 +36,7 @@ void Player::Update()
 
 	worldTransform_.translation_ += move;
 
-	
+
 
 	//à⁄ìÆå¿äEç¿ïW
 	const float kMoveLimitX = 13.0f;
@@ -47,7 +47,7 @@ void Player::Update()
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
-	
+
 
 	//çsóÒÇÃçƒåvéZ
 	worldTransform_.TransferMatrix();
@@ -56,13 +56,13 @@ void Player::Update()
 	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	debugText_->SetPos(50, 70);
 	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
-	
+
 	Rotation();
 	Attack();
 	//íeçXêV
-	if (bullet_)
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
-		bullet_->Update();
+		bullet->Update();
 	}
 }
 
@@ -86,23 +86,24 @@ void Player::Rotation()
 
 void Player::Attack()
 {
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 
 		//íeÇê∂ê¨ÇµÅAèâä˙âª
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_ );
+		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
+		newBullet->Initialize(model_, worldTransform_.translation_);
 
 		//íeÇìoò^Ç∑ÇÈ
-		bullet_ = newBullet;
+		bullets_.push_back(std::move(newBullet));
 	}
 }
 
 void Player::Draw(ViewProjection& viewProjection_) {
+
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
 	//íeÇÃï`âÊ
-	if (bullet_)
+	for(std::unique_ptr<PlayerBullet>&bullet:bullets_)
 	{
-		bullet_->Draw(viewProjection_);
+		bullet->Draw(viewProjection_);
 	}
 }
