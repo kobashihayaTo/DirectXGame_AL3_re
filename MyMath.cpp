@@ -1,5 +1,7 @@
 #pragma once
 #include "WorldTransform.h"
+#include "MyMath.h"
+#include <math.h>
 
 //’PˆÊs—ñ
 Matrix4 Identity() {
@@ -20,6 +22,7 @@ Matrix4 Scale(Vector3 scale_) {
 	matScale.m[3][3] = 1;
 	return matScale;
 }
+
 Matrix4 RotZ(Vector3 rotation_) {
 	//Z²‰ñ“]s—ñ‚ğéŒ¾
 	Matrix4 matRotZ;

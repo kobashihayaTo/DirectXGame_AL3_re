@@ -4,6 +4,7 @@
 #include "DebugText.h"
 #include "ViewProjection.h"
 #include <cassert>
+#include <PlayerBullet.h>
 
 #pragma once
 
@@ -26,6 +27,14 @@ public:
 	///</summary>
 	void Update();
 	///<summary>
+	///回転処理
+	///</summary>
+	void Rotation();
+	///<summary>
+	///描画
+	///</summary>
+	void Attack();
+	///<summary>
 	///描画
 	///</summary>
 	void Draw(ViewProjection& viewProjection_);
@@ -43,6 +52,8 @@ private:
 	Input* input_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
+	//弾
+	PlayerBullet* bullet_ = nullptr;
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 };

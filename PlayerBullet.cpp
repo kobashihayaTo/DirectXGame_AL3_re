@@ -1,0 +1,35 @@
+#include "PlayerBullet.h"
+#include "MyMath.h"
+
+
+void PlayerBullet::Initialize(Model* model, const Vector3& position)
+{
+	//NULLポインタチェック
+	assert(model);
+
+	model_ = model;
+	//テクスチャ読み込み
+	textureHandle_ = TextureManager::Load("black.png");
+
+	worldTransform_.Initialize();
+	//引数で受け取った初期座標をリセット
+	worldTransform_.translation_ = position;
+}
+void PlayerBullet::Update()
+{
+	worldTransform_.matWorld_ = Identity();
+	worldTransform_.matWorld_ *= Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= RotX(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= RotY(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= RotZ(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= Trans(worldTransform_.translation_);
+	//行列の再計算
+	worldTransform_.TransferMatrix();
+}
+void PlayerBullet::Draw(const ViewProjection& viewProjection)
+{
+	//モデルの描画
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+}
+
+
