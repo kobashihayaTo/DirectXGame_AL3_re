@@ -1,6 +1,26 @@
 #include "Player.h"
 #include "MyMath.h"
 
+
+//ベクトルと行列の掛け算
+Vector3 Math_(Vector3& vec_, Matrix4& mat_)
+{
+	Vector3 matMath_;
+	matMath_.x = vec_.x * mat_.m[0][0];
+	matMath_.x += vec_.y * mat_.m[1][0];
+	matMath_.x += vec_.z * mat_.m[2][0];
+
+	matMath_.y = vec_.x * mat_.m[0][1];
+	matMath_.y += vec_.y * mat_.m[1][1];
+	matMath_.y += vec_.z * mat_.m[2][1];
+
+	matMath_.z = vec_.x * mat_.m[0][2];
+	matMath_.z += vec_.y * mat_.m[1][2];
+	matMath_.z += vec_.z * mat_.m[2][2];
+
+	return matMath_;
+}
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	//NULLポインタチェック
 	assert(model);
@@ -15,6 +35,12 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 void Player::Update()
 {
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet)
+		{
+			return bullet->IsDead();
+		});
+
 	//キャラクターの移動ベクトル
 	Vector3 move = { 0,0,0 };
 
@@ -68,7 +94,7 @@ void Player::Update()
 
 void Player::Rotation()
 {
-	const float kCharacRotSpeed = 0.01f;
+	const float kCharacRotSpeed = 0.1f;
 
 	if (input_->PushKey(DIK_U)) {
 		worldTransform_.rotation_.y -= kCharacRotSpeed;
@@ -87,10 +113,14 @@ void Player::Rotation()
 void Player::Attack()
 {
 	if (input_->TriggerKey(DIK_SPACE)) {
-
+		//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = Math_(velocity, worldTransform_.matWorld_);
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
@@ -102,7 +132,7 @@ void Player::Draw(ViewProjection& viewProjection_) {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
 	//弾の描画
-	for(std::unique_ptr<PlayerBullet>&bullet:bullets_)
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
 		bullet->Draw(viewProjection_);
 	}
