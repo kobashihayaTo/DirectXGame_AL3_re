@@ -1,4 +1,5 @@
 ﻿#include "GameScene.h"
+#include "Enemy.h"
 #include "TextureManager.h"
 #include <cassert>
 
@@ -15,6 +16,7 @@ GameScene::~GameScene() {
 	delete model_;
 	//自キャラの解放
 	delete player_;
+	delete enemy_;
 }
 
 float GameScene::Angle(float angle)
@@ -42,6 +44,7 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 	//ファイル名指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("mario.jpg");
+	enemyHandle_ = TextureManager::Load("Red.png");
 	// 3Dモデルの生成
 	model_ = Model::Create();
 
@@ -50,8 +53,12 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	//自キャラの初期化
 	player_->Initialize(model_,textureHandle_);
-#pragma endregion
 
+	//敵キャラの生成
+	enemy_ = new Enemy();
+	//敵キャラの初期化
+	enemy_->Initialize(model_, enemyHandle_);
+#pragma endregion
 	//カメラ垂直方向視野角を設定
 	viewProjection_.fovAngleY = Angle(20.0f);
 #pragma region アスペクト,ニア,ファー
@@ -75,7 +82,7 @@ void GameScene::Update()
 {
 	//自キャラの更新
 	player_->Update();
-
+	enemy_->Update();
 	////視点の移動速さ
 	//const float KEyeSpeed = 0.01f;
 	//const float kCharacterSpeed = 0.2f;
@@ -140,6 +147,7 @@ void GameScene::Draw() {
 	Model::PreDraw(commandList);
 	//自キャラの描画
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>

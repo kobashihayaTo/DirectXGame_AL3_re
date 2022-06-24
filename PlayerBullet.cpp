@@ -35,7 +35,7 @@ void PlayerBullet::Update()
 	//ŠÔŒo‰ß‚ÅƒfƒX
 	if (--deathTimer_ <= 0)
 	{
-		isDead_ = true;
+		isDead_=true;
 	}
 }
 void PlayerBullet::Draw(const ViewProjection& viewProjection)
