@@ -24,6 +24,18 @@ void Enemy::Update() {
 	worldTransform_.matWorld_ *= Trans(worldTransform_.translation_);
 	//行列の再計算
 	worldTransform_.TransferMatrix();
+
+	switch (phase_)
+	{
+	case Phase::Approach:
+		ApproachVelocity();
+		break;
+	case Phase::Leave:
+		LeaveVelocity();
+		break;
+	}
+
+
 }
 
 void Enemy::Translation()
@@ -38,4 +50,18 @@ void Enemy::Translation()
 void Enemy::Draw(const ViewProjection& viewProjection){
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+}
+
+void Enemy::ApproachVelocity() {
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += ApproachVelocity_;
+	//特定の位置に達したら離脱
+	if (worldTransform_.translation_.z < 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::LeaveVelocity(){
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += LeaveVelocity_;
 }
