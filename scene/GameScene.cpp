@@ -1,12 +1,13 @@
 ﻿#include "GameScene.h"
 #include "Enemy.h"
-#include "TextureManager.h"
-#include <cassert>
+#include "Player.h"
 
+#include "TextureManager.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 
 #include <random>
+#include <cassert>
 
 #define PI 3.14
 
@@ -58,6 +59,9 @@ void GameScene::Initialize() {
 	enemy_ = new Enemy();
 	//敵キャラの初期化
 	enemy_->Initialize(model_, enemyHandle_);
+
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
 #pragma endregion
 	//カメラ垂直方向視野角を設定
 	viewProjection_.fovAngleY = Angle(20.0f);

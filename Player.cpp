@@ -117,3 +117,16 @@ void Player::Draw(ViewProjection& viewProjection_) {
 		bullet->Draw(viewProjection_);
 	}
 }
+
+//ワールド座標を取得
+Vector3 Player::GetWorldPosition()
+{
+	//ワールド座標を入れる変数
+	Vector3 wouldPos;
+	//ワールド行列の並行移動成分を取得
+	wouldPos.x = worldTransform_.matWorld_.m[3][0];
+	wouldPos.y = worldTransform_.matWorld_.m[3][1];
+	wouldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return wouldPos;
+}

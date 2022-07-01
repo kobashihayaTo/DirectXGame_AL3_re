@@ -78,6 +78,21 @@ void Enemy::Fire() {
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	Vector3 velocity(0, 0, kBulletSpeed);
+	//プレイヤーのワールド座標を取得
+	Vector3 playerPos = player_->GetWorldPosition();
+	//敵キャラのワールド座標を取得
+	Vector3 enemyPos = GetWorldPosition();
+	//敵キャラ->自キャラの差分ベクトルを求める
+	Vector3 velocity = Math_::Vector3Sub(playerPos, enemyPos);
+	//ベクトルの正規化
+	velocity = Math_::normalize(velocity);
+	//ベクトルの長さを、早さに合わせる
+	velocity *= kBulletSpeed;
+
+
+
+
+
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = Math_(velocity, worldTransform_.matWorld_);
 	//弾を生成し、初期化
@@ -86,7 +101,6 @@ void Enemy::Fire() {
 
 	//弾を登録する
 	bullets_.push_back(std::move(newBullet));
-
 }
 
 void Enemy::ApproachPhaseInt()
@@ -95,6 +109,16 @@ void Enemy::ApproachPhaseInt()
 	fileTimer = kFireInterval;
 }
 
+Vector3 Enemy::GetWorldPosition() {
+	//ワールド座標を入れる変数
+	Vector3 worldPos;
+	//ワールド行列の並行移動成分を取得
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
 //接近フェーズ
 void Enemy::ApproachVelocity() {
 	//発射タイマーカウントダウン

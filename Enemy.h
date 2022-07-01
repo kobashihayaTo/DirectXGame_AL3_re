@@ -7,6 +7,12 @@
 #include <cassert>
 #include "EnemyBullet.h"
 
+#include "EnemyBullet.h"
+#include "MyMath.h"
+#include "Player.h"
+
+//自機クラスの前方宣言
+class Player;
 
 enum class Phase{
 	Approach,//接近する
@@ -40,12 +46,21 @@ public:
 	///接近フェーズ初期化
 	/// </summary>
 	void ApproachPhaseInt();
-	
+	/// <summary>
+	/// プレイヤーのアドレスをセット
+	/// </summary>
+	/// <param name="player"></param>
+	void SetPlayer(Player* player) { player_ = player; }
+	/// <summary>
+	/// ワールド座標を所得
+	/// </summary>
+	Vector3 GetWorldPosition();
+
 	//発射間隔
 	static const int kFireInterval = 30;
 
-private:
 
+private:
 	///<summary>
 	///接近
 	/// </summary>
@@ -76,4 +91,7 @@ private:
 
 	//発射タイマー
 	int32_t fileTimer = 0;
+
+	//自キャラ
+	Player* player_ = nullptr;
 };

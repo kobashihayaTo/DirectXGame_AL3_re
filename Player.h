@@ -1,11 +1,14 @@
+#pragma once
 #include "model.h"
 #include "WorldTransform.h"
 #include "input.h"
 #include "DebugText.h"
 #include "ViewProjection.h"
-#include <cassert>
-#include <PlayerBullet.h>
 
+#include <PlayerBullet.h>
+#include <MyMath.h>
+
+#include <cassert>
 #include <memory>
 #include <list>
 
@@ -42,6 +45,9 @@ public:
 	///</summary>
 	void Draw(ViewProjection& viewProjection_);
 
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -59,4 +65,6 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>>bullets_;
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
+
+
 };
