@@ -62,3 +62,21 @@ Matrix4 Trans(Vector3 translation_) {
 	matTrans.m[3][2] = translation_.z;
 	return matTrans;
 }
+
+Vector3 Math_(Vector3& vec_, Matrix4& mat_)
+{
+	Vector3 matMath_;
+	matMath_.x = vec_.x * mat_.m[0][0];
+	matMath_.x += vec_.y * mat_.m[1][0];
+	matMath_.x += vec_.z * mat_.m[2][0];
+
+	matMath_.y = vec_.x * mat_.m[0][1];
+	matMath_.y += vec_.y * mat_.m[1][1];
+	matMath_.y += vec_.z * mat_.m[2][1];
+
+	matMath_.z = vec_.x * mat_.m[0][2];
+	matMath_.z += vec_.y * mat_.m[1][2];
+	matMath_.z += vec_.z * mat_.m[2][2];
+
+	return matMath_;
+}

@@ -5,6 +5,9 @@
 #include "DebugText.h"
 #include "ViewProjection.h"
 #include <cassert>
+#include "EnemyBullet.h"
+
+
 enum class Phase{
 	Approach,//接近する
 	Leave,   //離脱する
@@ -29,6 +32,21 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	///<summary>
+	///弾発射
+	///<summary>
+	void Fire();
+
+	///<summary>
+	///接近フェーズ初期化
+	/// </summary>
+	void ApproachPhaseInt();
+	
+	//発射間隔
+	static const int kFireInterval = 30;
+
+private:
+
+	///<summary>
 	///接近
 	/// </summary>
 	void ApproachVelocity();
@@ -37,7 +55,6 @@ public:
 	///離脱
 	/// </summary>
 	void LeaveVelocity();
-private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
@@ -51,6 +68,12 @@ private:
 	Phase phase_ = Phase::Approach;
 
 	//速度
-	Vector3 ApproachVelocity_ = { 0,0,-1.0f };
-	Vector3 LeaveVelocity_ = { -0.1f,0.1f,-0.1f };
+	Vector3 ApproachVelocity_ = { 0,0,-0.1f };
+	Vector3 LeaveVelocity_ = { 0,0,-0.1f };
+
+	//弾
+	std::list<std::unique_ptr<EnemyBullet>>bullets_;
+
+	//発射タイマー
+	int32_t fileTimer = 0;
 };

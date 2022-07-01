@@ -11,3 +11,5 @@ Matrix4 RotX(Vector3 rotation_);
 Matrix4 RotY(Vector3 rotation_);
 //•½sˆÚ“®s—ñ‚ğéŒ¾
 Matrix4 Trans(Vector3 translation_);
+
+Vector3 Math_(Vector3& vec_, Matrix4& mat_);
