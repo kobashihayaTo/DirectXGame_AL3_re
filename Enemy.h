@@ -7,9 +7,6 @@
 #include <cassert>
 #include "EnemyBullet.h"
 
-#include "EnemyBullet.h"
-#include "MyMath.h"
-#include "Player.h"
 
 //自機クラスの前方宣言
 class Player;

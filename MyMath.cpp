@@ -80,3 +80,25 @@ Vector3 Math_(Vector3& vec_, Matrix4& mat_)
 
 	return matMath_;
 }
+
+Vector3 Vector3sub(Vector3& v1, Vector3& v2)
+{
+	Vector3 temp(v1);
+	return temp -= v2;
+}
+
+Vector3 normalize(Vector3& vec)
+{
+	float len = length(vec);
+
+	if (len != 0) {
+		return vec /= len;
+	}
+
+	return vec;
+}
+
+float length(Vector3& vec)
+{
+	return std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}

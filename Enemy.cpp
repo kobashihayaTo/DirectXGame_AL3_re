@@ -1,7 +1,7 @@
 #include "Enemy.h"
-#include "MyMath.h"
 #include <cassert>
-
+#include "Player.h"
+#include "MyMath.h"
 
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	//NULLポインタチェック
@@ -77,21 +77,17 @@ void Enemy::Fire() {
 	Vector3 position = worldTransform_.translation_;
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+
 	//プレイヤーのワールド座標を取得
 	Vector3 playerPos = player_->GetWorldPosition();
 	//敵キャラのワールド座標を取得
 	Vector3 enemyPos = GetWorldPosition();
 	//敵キャラ->自キャラの差分ベクトルを求める
-	Vector3 velocity = Math_::Vector3Sub(playerPos, enemyPos);
+	Vector3 velocity = Vector3sub(enemyPos,playerPos);
 	//ベクトルの正規化
-	velocity = Math_::normalize(velocity);
+	velocity = normalize(velocity);
 	//ベクトルの長さを、早さに合わせる
 	velocity *= kBulletSpeed;
-
-
-
-
 
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = Math_(velocity, worldTransform_.matWorld_);
