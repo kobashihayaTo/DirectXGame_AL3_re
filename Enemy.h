@@ -52,10 +52,18 @@ public:
 	/// ワールド座標を所得
 	/// </summary>
 	Vector3 GetWorldPosition();
-
+	//衝突が起きたら呼び出されるコールバック変数
+	void OnCollision();
 	//発射間隔
 	static const int kFireInterval = 30;
 
+	//弾リストを追加
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
+	/// <summary>
+	/// 半径を所得
+	/// </summary>
+	float GetRadius();
 
 private:
 	///<summary>
@@ -91,4 +99,7 @@ private:
 
 	//自キャラ
 	Player* player_ = nullptr;
+
+	//半径
+	const float radius_ = 1.0f;
 };

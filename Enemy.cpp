@@ -35,12 +35,12 @@ void Enemy::Update() {
 		LeaveVelocity();
 		break;
 	}
-	worldTransform_.matWorld_ = Identity();
-	worldTransform_.matWorld_ *= Scale(worldTransform_.scale_);
-	worldTransform_.matWorld_ *= RotX(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= RotY(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= RotZ(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= Trans(worldTransform_.translation_);
+	worldTransform_.matWorld_ = MyMath::Identity();
+	worldTransform_.matWorld_ *= MyMath::Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= MyMath::RotX(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotY(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotZ(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::Trans(worldTransform_.translation_);
 	//行列の再計算
 	worldTransform_.TransferMatrix();
 
@@ -83,14 +83,14 @@ void Enemy::Fire() {
 	//敵キャラのワールド座標を取得
 	Vector3 enemyPos = GetWorldPosition();
 	//敵キャラ->自キャラの差分ベクトルを求める
-	Vector3 velocity = Vector3sub(playerPos, enemyPos);
+	Vector3 velocity = MyMath::Vector3sub(playerPos, enemyPos);
 	//ベクトルの正規化
-	velocity = normalize(velocity);
+	velocity = MyMath::normalize(velocity);
 	//ベクトルの長さを、早さに合わせる
 	velocity *= kBulletSpeed;
 
 	//速度ベクトルを自機の向きに合わせて回転させる
-	velocity = Math_(velocity, worldTransform_.matWorld_);
+	velocity = MyMath::Math_(velocity, worldTransform_.matWorld_);
 	//弾を生成し、初期化
 	std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
 	newBullet->Initialize(model_, position, velocity);

@@ -28,6 +28,15 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	bool IsDead()const { return isDead_; }
+	//衝突が起きたら呼び出されるコールバック変数
+	void OnCollision();
+
+	Vector3 GetWorldPosition();
+	
+	/// <summary>
+	/// 半径を所得
+	/// </summary>
+	float GetRadius();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -43,5 +52,6 @@ private:
 	//デスフラグ
 	bool isDead_ = false;
 
-	
+	//半径
+	const float radius_ = 1.0f;
 };

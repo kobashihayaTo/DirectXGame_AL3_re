@@ -45,9 +45,19 @@ public:
 	///</summary>
 	void Draw(ViewProjection& viewProjection_);
 
+	//衝突が起きたら呼び出されるコールバック変数
+	void OnCollision();	
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
+	//弾リストを追加
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
+
+	/// <summary>
+	/// 半径を所得
+	/// </summary>
+	float GetRadius();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -66,5 +76,6 @@ private:
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 
-
+	//半径
+	const float radius_ = 1.0f;
 };

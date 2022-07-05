@@ -82,12 +82,12 @@ void Player::Rotation()
 	else if (input_->PushKey(DIK_I)) {
 		worldTransform_.rotation_.y += kCharacRotSpeed;
 	}
-	worldTransform_.matWorld_ = Identity();
-	worldTransform_.matWorld_ *= Scale(worldTransform_.scale_);
-	worldTransform_.matWorld_ *= RotX(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= RotY(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= RotZ(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= Trans(worldTransform_.translation_);
+	worldTransform_.matWorld_ = MyMath::Identity();
+	worldTransform_.matWorld_ *= MyMath::Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= MyMath::RotX(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotY(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotZ(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::Trans(worldTransform_.translation_);
 }
 
 void Player::Attack()
@@ -97,7 +97,7 @@ void Player::Attack()
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = Math_(velocity, worldTransform_.matWorld_);
+		velocity = MyMath::Math_(velocity, worldTransform_.matWorld_);
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
 		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
@@ -130,3 +130,10 @@ Vector3 Player::GetWorldPosition()
 
 	return wouldPos;
 }
+
+void Player::OnCollision()
+{
+
+}
+
+float Player::GetRadius() { return radius_; }

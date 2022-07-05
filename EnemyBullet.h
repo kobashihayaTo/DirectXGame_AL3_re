@@ -26,8 +26,17 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection);
 
+	Vector3 GetWorldPosition();
+
+	/// <summary>
+	/// 半径を所得
+	/// </summary>
+	float GetRadius();
 
 	bool IsDead()const { return isDead_; }
+
+	//衝突が起きたら呼び出されるコールバック変数
+	void OnCollision();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -43,6 +52,8 @@ private:
 	int32_t deathTimer_ = kLineTime;
 	//デスフラグ
 	bool isDead_ = false;
+
+	const float radius_ = 1.0f;
 
 };
 
