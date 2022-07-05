@@ -83,7 +83,7 @@ void Enemy::Fire() {
 	//敵キャラのワールド座標を取得
 	Vector3 enemyPos = GetWorldPosition();
 	//敵キャラ->自キャラの差分ベクトルを求める
-	Vector3 velocity = Vector3sub(enemyPos,playerPos);
+	Vector3 velocity = Vector3sub(playerPos, enemyPos);
 	//ベクトルの正規化
 	velocity = normalize(velocity);
 	//ベクトルの長さを、早さに合わせる
