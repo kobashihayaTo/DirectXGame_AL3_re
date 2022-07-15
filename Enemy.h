@@ -60,10 +60,6 @@ public:
 	//’eƒŠƒXƒg‚ğ’Ç‰Á
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
-	/// <summary>
-	/// ”¼Œa‚ğŠ“¾
-	/// </summary>
-	float GetRadius();
 
 private:
 	///<summary>

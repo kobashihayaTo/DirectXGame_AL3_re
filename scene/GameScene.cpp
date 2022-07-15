@@ -1,8 +1,4 @@
 ﻿#include "GameScene.h"
-#include "Enemy.h"
-#include "Player.h"
-#include "MyMath.h"
-
 #include "TextureManager.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
@@ -10,12 +6,15 @@
 #include <random>
 #include <cassert>
 
+#include "Player.h"
+
 #define PI 3.14
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
+	delete modelSkydome_;
 	//自キャラの解放
 	delete player_;
 	delete enemy_;
@@ -44,28 +43,19 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
 	//ファイル名指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	enemyHandle_ = TextureManager::Load("Red.png");
+
 	// 3Dモデルの生成
 	model_ = Model::Create();
 
-#pragma region キャラ 
-	//自キャラの生成
-	player_ = new Player();
-	//自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	////カメラ垂直方向視野角を設定
+	//viewProjection_.fovAngleY = Angle(20.0f);
 
-	//敵キャラの生成
-	enemy_ = new Enemy();
-	//敵キャラの初期化
-	enemy_->Initialize(model_, enemyHandle_);
-
-	//敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
-#pragma endregion
-	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = Angle(20.0f);
+	//デバッグカメラの生成
+	debugCamera_ = new DebugCamera(1200, 720);
 #pragma region アスペクト,ニア,ファー
 	////アスペクト比を設定
 	//viewProjection_.aspectRatio = 1.0f;
@@ -81,14 +71,55 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示の参照するビュープロジェクションを指定する
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+#pragma region キャラ 
+	//自キャラの生成
+	player_ = new Player();
+	//自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+
+	//敵キャラの生成
+	enemy_ = new Enemy();
+	//敵キャラの初期化
+	enemy_->Initialize(model_, enemyHandle_);
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
+	//天球の生成
+	skydome_= new Skydome();
+
+	skydome_->Initialize();
+#pragma endregion
 }
 
 void GameScene::Update()
 {
+	if (input_->TriggerKey(DIK_B)) {
+		if (isDebugCameraActive_) {
+			isDebugCameraActive_ = false;
+		}
+		else {
+			isDebugCameraActive_ = true;
+		}
+	}
+	
+	if (isDebugCameraActive_) {
+		//デバッグカメラの更新
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	}
+	else {
+		viewProjection_.UpdateMatrix();
+		viewProjection_.TransferMatrix();
+	}
 	//自キャラの更新
 	player_->Update();
 	enemy_->Update();
+	skydome_->Update();
 	CheckAllCollision();
+	
 }
 
 void GameScene::Draw() {
@@ -113,15 +144,17 @@ void GameScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
-	//自キャラの描画
-	player_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
+
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 3Dモデル描画 
+	// 自キャラの描画
+	player_->Draw(viewProjection_);
 
+	enemy_->Draw(viewProjection_);
 
+	skydome_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -158,7 +191,7 @@ void GameScene::CheckAllCollision()
 	posA = player_->GetWorldPosition();
 
 	//自キャラと敵弾全ての当たり判定
-	for (const std::unique_ptr<EnemyBullet>& bullet:enemyBullets)
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
 	{
 		//敵弾の座標
 		posB = bullet->GetWorldPosition();
