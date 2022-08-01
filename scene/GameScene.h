@@ -13,6 +13,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "EnemyBullet.h"
 #include "Skydome.h"
 #include "RailCamera.h"
 
@@ -70,7 +71,10 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollision();
 
-
+	/// <summary>
+	/// 散弾を追加する
+	/// </summary>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet> enemyBullet);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -93,6 +97,8 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	Enemy* enemy_ = nullptr;
+
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets;
 
 	Skydome* skydome_ = nullptr;
 

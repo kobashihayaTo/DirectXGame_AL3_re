@@ -115,9 +115,22 @@ void GameScene::Update()
 	//自キャラの更新
 	player_->Update();
 	enemy_->Update();
+
 	skydome_->Update();
 	CheckAllCollision();
 	railCamera_->Update();
+
+	//デスフラグの立った弾を削除
+	enemyBullets.remove_if([](std::unique_ptr<EnemyBullet>& bullet)
+		{
+			return bullet->IsDead();
+		});
+
+	//弾更新
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
+	{
+		bullet->Update();
+	}
 
 	//ゲームシーンに適応させる
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
@@ -158,6 +171,12 @@ void GameScene::Draw() {
 
 	enemy_->Draw(viewProjection_);
 
+	//弾の描画
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
+	{
+		bullet->Draw(viewProjection_);
+	}
+
 	skydome_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -187,8 +206,7 @@ void GameScene::CheckAllCollision()
 
 	//自弾リストの取得
 	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
-	//敵弾リストの取得
-	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
+
 
 #pragma region 自キャラと敵弾の当たり判定
 	//自キャラの座標
@@ -267,4 +285,10 @@ void GameScene::CheckAllCollision()
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> enemyBullet)
+{
+	//リストに登録する
+	enemyBullets.push_back(std::move(enemyBullet));
 }

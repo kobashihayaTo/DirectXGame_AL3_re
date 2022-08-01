@@ -6,10 +6,13 @@
 #include "ViewProjection.h"
 #include <cassert>
 #include "EnemyBullet.h"
+#include "MyMath.h"
 
 
 //自機クラスの前方宣言
 class Player;
+
+class GameScene;
 
 enum class Phase{
 	Approach,//接近する
@@ -53,14 +56,14 @@ public:
 	/// ワールド座標を所得
 	/// </summary>
 	Vector3 GetWorldPosition();
+
 	//衝突が起きたら呼び出されるコールバック変数
 	void OnCollision();
+
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; };
+
 	//発射間隔
 	static const int kFireInterval = 30;
-
-	//弾リストを追加
-	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
-
 
 private:
 	///<summary>
@@ -88,8 +91,8 @@ private:
 	Vector3 ApproachVelocity_ = { 0,0,-0.1f };
 	Vector3 LeaveVelocity_ = { 0,0,-0.1f };
 
-	//弾
-	std::list<std::unique_ptr<EnemyBullet>>bullets_;
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
 
 	//発射タイマー
 	int32_t fileTimer = 0;

@@ -1,7 +1,6 @@
 #include "Enemy.h"
 #include <cassert>
-#include "Player.h"
-#include "MyMath.h"
+#include "GameScene.h"
 
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	//NULLポインタチェック
@@ -20,11 +19,6 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 void Enemy::Update() {
 	Translation();
 
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet)
-		{
-			return bullet->IsDead();
-		});
 
 	switch (phase_)
 	{
@@ -44,11 +38,7 @@ void Enemy::Update() {
 	//行列の再計算
 	worldTransform_.TransferMatrix();
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
-	{
-		bullet->Update();
-	}
+
 
 }
 
@@ -64,11 +54,7 @@ void Enemy::Translation()
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	//弾の描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
-	{
-		bullet->Draw(viewProjection);
-	}
+
 }
 
 void Enemy::Fire() {
@@ -97,7 +83,7 @@ void Enemy::Fire() {
 	newBullet->Initialize(model_, position, velocity);
 
 	//弾を登録する
-	bullets_.push_back(std::move(newBullet));
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 void Enemy::ApproachPhaseInt()
