@@ -18,7 +18,7 @@ namespace MyMath {
 	Matrix4 Trans(Vector3 translation_);
 
 	Vector3 Math_(Vector3& vec_, Matrix4& mat_);
-
+	
 	Vector3 Vector3sub(Vector3& v1, Vector3& v2);
 
 	Vector3 normalize(Vector3& vec);

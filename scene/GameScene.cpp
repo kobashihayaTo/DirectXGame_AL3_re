@@ -51,19 +51,10 @@ void GameScene::Initialize() {
 	// 3Dモデルの生成
 	model_ = Model::Create();
 
-	////カメラ垂直方向視野角を設定
-	//viewProjection_.fovAngleY = Angle(20.0f);
 
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1200, 720);
-#pragma region アスペクト,ニア,ファー
-	////アスペクト比を設定
-	//viewProjection_.aspectRatio = 1.0f;
-	////ニアクリップ距離を設定
-	//viewProjection_.nearZ = 52.0f;
-	////ファークリップ距離を設定
-	//viewProjection_.farZ = 53.0f;
-#pragma endregion
+
 		//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
@@ -84,12 +75,18 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_, enemyHandle_);
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
+#pragma endregion
+
+	//レールカメラの生成
+	railCamera_ =std::make_unique<RailCamera>();
+	//レールカメラの生成
+	railCamera_->Initialize(Vector3(0.0f, 0.0f, -50.0f), Vector3(0.0f, 0.0f, 0.0f));
+
+	player_->SetParent(railCamera_->GetWorldMatrix());
 
 	//天球の生成
-	skydome_= new Skydome();
-
+	skydome_ = new Skydome();
 	skydome_->Initialize();
-#pragma endregion
 }
 
 void GameScene::Update()
@@ -114,12 +111,19 @@ void GameScene::Update()
 		viewProjection_.UpdateMatrix();
 		viewProjection_.TransferMatrix();
 	}
+
 	//自キャラの更新
 	player_->Update();
 	enemy_->Update();
 	skydome_->Update();
 	CheckAllCollision();
-	
+	railCamera_->Update();
+
+	//ゲームシーンに適応させる
+	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
+	viewProjection_.TransferMatrix();
 }
 
 void GameScene::Draw() {

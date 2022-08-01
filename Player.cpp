@@ -10,7 +10,12 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
+
+	worldTransform_.translation_.z = 30;
+
 	worldTransform_.Initialize();
+
+	
 }
 
 void Player::Update()
@@ -42,8 +47,6 @@ void Player::Update()
 
 	worldTransform_.translation_ += move;
 
-
-
 	//à⁄ìÆå¿äEç¿ïW
 	const float kMoveLimitX = 13.0f;
 	const float kMoveLimitY = 7.0f;
@@ -53,8 +56,17 @@ void Player::Update()
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
+	Rotation();
+	Attack();
 
-
+	worldTransform_.matWorld_ = MyMath::Identity();
+	worldTransform_.matWorld_ *= MyMath::Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= MyMath::RotX(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotY(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::RotZ(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= MyMath::Trans(worldTransform_.translation_);
+	//ÉèÅ[ÉãÉhçsóÒÇÃïΩçsà⁄ìÆê¨ï™
+	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 	//çsóÒÇÃçƒåvéZ
 	worldTransform_.TransferMatrix();
 
@@ -62,9 +74,6 @@ void Player::Update()
 	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	debugText_->SetPos(50, 70);
 	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
-
-	Rotation();
-	Attack();
 	//íeçXêV
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
@@ -82,17 +91,16 @@ void Player::Rotation()
 	else if (input_->PushKey(DIK_I)) {
 		worldTransform_.rotation_.y += kCharacRotSpeed;
 	}
-	worldTransform_.matWorld_ = MyMath::Identity();
-	worldTransform_.matWorld_ *= MyMath::Scale(worldTransform_.scale_);
-	worldTransform_.matWorld_ *= MyMath::RotX(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= MyMath::RotY(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= MyMath::RotZ(worldTransform_.rotation_);
-	worldTransform_.matWorld_ *= MyMath::Trans(worldTransform_.translation_);
+	
 }
 
 void Player::Attack()
 {
+	
 	if (input_->TriggerKey(DIK_SPACE)) {
+
+		Vector3 position = GetWorldPosition();
+
 		//íeÇÃë¨ìx
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
@@ -100,7 +108,7 @@ void Player::Attack()
 		velocity = MyMath::Math_(velocity, worldTransform_.matWorld_);
 		//íeÇê∂ê¨ÇµÅAèâä˙âª
 		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(model_,position, velocity);
 
 		//íeÇìoò^Ç∑ÇÈ
 		bullets_.push_back(std::move(newBullet));
@@ -131,9 +139,6 @@ Vector3 Player::GetWorldPosition()
 	return wouldPos;
 }
 
-void Player::OnCollision()
-{
-
-}
+void Player::OnCollision(){}
 
 float Player::GetRadius() { return radius_; }

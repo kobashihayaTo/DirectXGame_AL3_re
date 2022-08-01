@@ -48,6 +48,7 @@ public:
 	/// </summary>
 	/// <param name="player"></param>
 	void SetPlayer(Player* player) { player_ = player; }
+
 	/// <summary>
 	/// ƒ[ƒ‹ƒhÀ•W‚ğŠ“¾
 	/// </summary>

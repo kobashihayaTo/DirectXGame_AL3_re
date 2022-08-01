@@ -73,6 +73,7 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 
 void Enemy::Fire() {
 
+
 	//敵の座標コピー
 	Vector3 position = worldTransform_.translation_;
 	//弾の速度

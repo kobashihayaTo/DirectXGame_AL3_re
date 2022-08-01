@@ -14,6 +14,7 @@
 
 #pragma once
 
+class RailCamera;
 
 ///<summary>
 ///自キャラ
@@ -58,6 +59,13 @@ public:
 	/// 半径を所得
 	/// </summary>
 	float GetRadius();
+
+
+	//Vector3 SetRailCamera(RailCamera* camera) { camera_ = camera; }
+
+	void SetParent(WorldTransform* worldTransform) {
+		worldTransform_.parent_ = worldTransform;
+	}
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -78,4 +86,6 @@ private:
 
 	//半径
 	const float radius_ = 1.0f;
+
+	RailCamera* camera_ = nullptr;
 };

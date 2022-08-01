@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
+#include "RailCamera.h"
 
 
 /// <summary>
@@ -96,6 +97,8 @@ private: // メンバ変数
 	Skydome* skydome_ = nullptr;
 
 	Model* modelSkydome_ = nullptr;
+
+	std::unique_ptr<RailCamera> railCamera_;
 
 	//デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
