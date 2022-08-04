@@ -66,15 +66,20 @@ public: // メンバ関数
 	void Draw();
 
 	float Angle(float angle);
+	
+	/// <summary>
+	/// 散弾を追加する
+	/// </summary>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet> enemyBullet);
+
+private:
 	/// <summary>
 	/// 衝突判定と応答
 	/// </summary>
 	void CheckAllCollision();
 
-	/// <summary>
-	/// 散弾を追加する
-	/// </summary>
-	void AddEnemyBullet(std::unique_ptr<EnemyBullet> enemyBullet);
+
+	void AddEnemy(Vector3 pos);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -84,6 +89,11 @@ private: // メンバ変数
 
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
+	//デバッグカメラ有効
+	bool isDebugCameraActive_ = false;
+
+	//ビュープロジェクション
+	ViewProjection viewProjection_;
 
 	//テクスチャバンドル
 	uint32_t textureHandle_ = 0;
@@ -96,9 +106,9 @@ private: // メンバ変数
 
 	Player* player_ = nullptr;
 
-	Enemy* enemy_ = nullptr;
+	std::list<std::unique_ptr<Enemy>> enemys_;
 
-	std::list<std::unique_ptr<EnemyBullet>> enemyBullets;
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	Skydome* skydome_ = nullptr;
 
@@ -106,9 +116,7 @@ private: // メンバ変数
 
 	std::unique_ptr<RailCamera> railCamera_;
 
-	//デバッグカメラ有効
-	bool isDebugCameraActive_ = false;
 
-	//ビュープロジェクション
-	ViewProjection viewProjection_;
+
+	
 };

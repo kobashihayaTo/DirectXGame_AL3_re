@@ -16,8 +16,6 @@ GameScene::~GameScene() {
 	delete model_;
 	delete modelSkydome_;
 	//自キャラの解放
-	delete player_;
-	delete enemy_;
 }
 
 float GameScene::Angle(float angle)
@@ -69,12 +67,7 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
 
-	//敵キャラの生成
-	enemy_ = new Enemy();
-	//敵キャラの初期化
-	enemy_->Initialize(model_, enemyHandle_);
-	//敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
+
 #pragma endregion
 
 	//レールカメラの生成
@@ -91,14 +84,6 @@ void GameScene::Initialize() {
 
 void GameScene::Update()
 {
-	if (input_->TriggerKey(DIK_B)) {
-		if (isDebugCameraActive_) {
-			isDebugCameraActive_ = false;
-		}
-		else {
-			isDebugCameraActive_ = true;
-		}
-	}
 	
 	if (isDebugCameraActive_) {
 		//デバッグカメラの更新
@@ -114,20 +99,21 @@ void GameScene::Update()
 
 	//自キャラの更新
 	player_->Update();
-	enemy_->Update();
-
+	for(const std::unique_ptr<Enemy>&enemy:enemys_){
+		enemy->Update();
+	}
 	skydome_->Update();
 	CheckAllCollision();
 	railCamera_->Update();
 
 	//デスフラグの立った弾を削除
-	enemyBullets.remove_if([](std::unique_ptr<EnemyBullet>& bullet)
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet)
 		{
 			return bullet->IsDead();
 		});
 
 	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
+	for (std::unique_ptr<EnemyBullet>& bullet :bullets_)
 	{
 		bullet->Update();
 	}
@@ -169,15 +155,18 @@ void GameScene::Draw() {
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
 
-	enemy_->Draw(viewProjection_);
+	for (const std::unique_ptr<Enemy>& enemy : enemys_){
+		enemy->Draw(viewProjection_);
+	}
 
 	//弾の描画
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
 		bullet->Draw(viewProjection_);
 	}
 
 	skydome_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -213,7 +202,7 @@ void GameScene::CheckAllCollision()
 	posA = player_->GetWorldPosition();
 
 	//自キャラと敵弾全ての当たり判定
-	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets)
+	for (const std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
 		//敵弾の座標
 		posB = bullet->GetWorldPosition();
@@ -235,35 +224,38 @@ void GameScene::CheckAllCollision()
 #pragma endregion
 
 #pragma region 自弾と敵キャラの当たり判定
-	//自キャラの座標
-	posA = enemy_->GetWorldPosition();
 
-	//自キャラと敵弾全ての当たり判定
-	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets)
-	{
-		//敵弾の座標
-		posB = bullet->GetWorldPosition();
-		//AとBの距離を求める
-		Vector3 len = MyMath::Vector3sub(posA, posB);
-		float distance = MyMath::length(len);
+	//敵キャラと自弾全ての当たり判定
+	for (const std::unique_ptr<Enemy>& enemy : enemys_) {
+		for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets)
+		{
+			//自弾の座標
+			posB = bullet->GetWorldPosition();
+			//敵のキャラの座標
+			posA = enemy->GetWorldPosition();
+			//AとBの距離を求める
+			Vector3 len = MyMath::Vector3sub(posA, posB);
+			float distance = MyMath::length(len);
 
-		//自キャラと敵弾の半径
-		float radius = player_->GetRadius() + bullet->GetRadius();
+			//敵キャラと敵弾の半径
+			float radius = player_->GetRadius() + bullet->GetRadius();
 
-		//自キャラと敵弾の交差判定
-		if (distance <= radius) {
-			//自キャラの衝突時コールバックを呼び出す
-			player_->OnCollision();
-			//敵弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
+			//自キャラと敵弾の交差判定
+			if (distance <= radius) {
+				//自キャラの衝突時コールバックを呼び出す
+				enemy->OnCollision();
+				//敵弾の衝突時コールバックを呼び出す
+				bullet->OnCollision();
+			}
 		}
 	}
+	
 #pragma endregion
 
 #pragma region 自弾と敵弾の当たり判定
 	//自弾と敵弾全ての当たり判定
 	for (const std::unique_ptr<PlayerBullet>& bulletA : playerBullets) {
-		for (const std::unique_ptr<EnemyBullet>& bulletB : enemyBullets) {
+		for (const std::unique_ptr<EnemyBullet>& bulletB : bullets_) {
 
 			//自弾の座標
 			posB = bulletA->GetWorldPosition();
@@ -287,8 +279,19 @@ void GameScene::CheckAllCollision()
 #pragma endregion
 }
 
+void GameScene::AddEnemy(Vector3 pos)
+{
+	// スマートポインタ (使いやすいのがユニークポインタ)
+	std::unique_ptr<Enemy>enemy = std::make_unique<Enemy>();
+
+	enemy->Initialize(model_, textureHandle_);
+
+	//リストに登録する
+	enemys_.push_back(std::move(enemy));
+}
+
 void GameScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> enemyBullet)
 {
 	//リストに登録する
-	enemyBullets.push_back(std::move(enemyBullet));
+	bullets_.push_back(std::move(enemyBullet));
 }

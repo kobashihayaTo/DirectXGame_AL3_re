@@ -17,8 +17,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Enemy::Update() {
-	Translation();
 
+	Translation();
 
 	switch (phase_)
 	{
@@ -38,8 +38,6 @@ void Enemy::Update() {
 	//行列の再計算
 	worldTransform_.TransferMatrix();
 
-
-
 }
 
 void Enemy::Translation()
@@ -54,14 +52,11 @@ void Enemy::Translation()
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
 }
 
 void Enemy::Fire() {
+	assert(player_);
 
-
-	//敵の座標コピー
-	Vector3 position = worldTransform_.translation_;
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 
@@ -78,13 +73,18 @@ void Enemy::Fire() {
 
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = MyMath::Math_(velocity, worldTransform_.matWorld_);
+	
 	//弾を生成し、初期化
 	std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(model_, position, velocity);
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	//弾を登録する
-	gameScene_->AddEnemyBullet(newBullet);
+	gameScene_->AddEnemyBullet(std::move(newBullet));
 }
+
+void Enemy::OnCollision() { isDead_ = true; }
+
+float Enemy::GetRadius() { return radius_; }
 
 void Enemy::ApproachPhaseInt()
 {
@@ -102,6 +102,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+
 //接近フェーズ
 void Enemy::ApproachVelocity() {
 	//発射タイマーカウントダウン

@@ -6,7 +6,6 @@
 #include "ViewProjection.h"
 #include <cassert>
 #include "EnemyBullet.h"
-#include "MyMath.h"
 
 
 //自機クラスの前方宣言
@@ -46,6 +45,7 @@ public:
 	///接近フェーズ初期化
 	/// </summary>
 	void ApproachPhaseInt();
+
 	/// <summary>
 	/// プレイヤーのアドレスをセット
 	/// </summary>
@@ -60,10 +60,17 @@ public:
 	//衝突が起きたら呼び出されるコールバック変数
 	void OnCollision();
 
+	/// <summary>
+	/// 半径を所得
+	/// </summary>
+	float GetRadius();
+
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; };
 
 	//発射間隔
 	static const int kFireInterval = 30;
+
+	
 
 private:
 	///<summary>
@@ -75,24 +82,26 @@ private:
 	///離脱
 	/// </summary>
 	void LeaveVelocity();
+
 	//ワールド変換データ
 	WorldTransform worldTransform_;
+
 	//モデル
 	Model* model_ = nullptr;
+
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
 	//デバック用表示
 	DebugText* debugText_ = nullptr;
 	Input* input_ = nullptr;
+
 	//フェーズ
 	Phase phase_ = Phase::Approach;
 
 	//速度
 	Vector3 ApproachVelocity_ = { 0,0,-0.1f };
 	Vector3 LeaveVelocity_ = { 0,0,-0.1f };
-
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
 
 	//発射タイマー
 	int32_t fileTimer = 0;
@@ -102,4 +111,10 @@ private:
 
 	//半径
 	const float radius_ = 1.0f;
+
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
+
+	//デスフラグ
+	bool isDead_ = false;
 };
