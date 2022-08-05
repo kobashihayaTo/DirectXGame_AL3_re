@@ -33,14 +33,17 @@ public:
 	///更新
 	///</summary>
 	void Update();
+
 	///<summary>
 	///回転処理
 	///</summary>
 	void Rotation();
+
 	///<summary>
 	///描画
 	///</summary>
 	void Attack();
+
 	///<summary>
 	///描画
 	///</summary>
@@ -67,6 +70,7 @@ public:
 		worldTransform_.parent_ = worldTransform;
 	}
 private:
+
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル

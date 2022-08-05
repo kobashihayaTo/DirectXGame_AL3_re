@@ -12,8 +12,9 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotation)
 
 void RailCamera::Update()
 {
-	//移動
-	worldTransform_.translation_ += Vector3(0, 0, 0.1f);
+	//移動速度
+	worldTransform_.translation_ += Vector3(0, 0, 0.01f);
+	
 	//ワールドトランスフォームを更新
 	worldTransform_.matWorld_ = MyMath::Identity();
 	worldTransform_.matWorld_ *= MyMath::Scale(worldTransform_.scale_);
@@ -21,14 +22,14 @@ void RailCamera::Update()
 	worldTransform_.matWorld_ *= MyMath::RotY(worldTransform_.rotation_);
 	worldTransform_.matWorld_ *= MyMath::RotZ(worldTransform_.rotation_);
 	worldTransform_.matWorld_ *= MyMath::Trans(worldTransform_.translation_);
+	
 	//ワールド行列の平行移動成分
 	viewProjection_.eye.x = worldTransform_.matWorld_.m[3][0];
 	viewProjection_.eye.y = worldTransform_.matWorld_.m[3][1];
 	viewProjection_.eye.z = worldTransform_.matWorld_.m[3][2];
 
-
-
-
+	Rotation_();
+	
 	//ワールド前方ベクトル
 	Vector3 forward(0, 0, 1);
 	//レールカメラの回転を反映
@@ -55,4 +56,18 @@ void RailCamera::Update()
 		"RailCamera Pos:(%f,%f,%f)", viewProjection_.eye.x,
 		viewProjection_.eye.y,
 		viewProjection_.eye.z);
+}
+
+
+void RailCamera::Rotation_(){
+
+	/*worldTransform_.rotation_.y -= 0.01f;*/
+
+	//if (input_->PushKey(DIK_A)) {
+	//	
+	//}
+	//else if (input_->PushKey(DIK_D)) {
+	//	worldTransform_.rotation_.y += 0.01f;
+	//}
+
 }

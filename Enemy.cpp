@@ -55,7 +55,7 @@ void Enemy::Update() {
 void Enemy::Translation()
 {
 	Vector3 move = { 0,0,0 };
-	const float speed = 0.003f;
+	const float speed = 0.0003f;
 	move.z -= speed;
 
 	worldTransform_.translation_ += move;
@@ -131,7 +131,7 @@ void Enemy::ApproachVelocity() {
 	//移動(ベクトルを加算)
 	worldTransform_.translation_ += ApproachVelocity_;
 	//特定の位置に達したら離脱
-	if (worldTransform_.translation_.z < 0.0f) {
+	if (worldTransform_.translation_.z < -1.0f) {
 		phase_ = Phase::Leave;
 	}
 }
@@ -140,3 +140,10 @@ void Enemy::LeaveVelocity() {
 	//移動(ベクトルを加算)
 	worldTransform_.translation_ += LeaveVelocity_;
 }
+
+void Enemy::OnCollision() {
+	//デスフラグの立った
+	isDead_ = true;
+}
+
+float Enemy::GetRadius() { return radius_; }

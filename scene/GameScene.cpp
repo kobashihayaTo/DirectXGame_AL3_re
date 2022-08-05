@@ -217,26 +217,29 @@ void GameScene::CheckAllCollision()
 #pragma endregion
 
 #pragma region 自弾と敵キャラの当たり判定
-	//自キャラの座標
-	posA = enemy_->GetWorldPosition();
+
 
 	//自キャラと敵弾全ての当たり判定
 	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets)
 	{
-		//敵弾の座標
+
+		//自弾の座標
 		posB = bullet->GetWorldPosition();
+		//敵キャラの座標
+		posA = enemy_->GetWorldPosition();
+
 		//AとBの距離を求める
 		Vector3 len = MyMath::Vector3sub(posA, posB);
 		float distance = MyMath::length(len);
 
-		//自キャラと敵弾の半径
-		float radius = player_->GetRadius() + bullet->GetRadius();
+		//自弾と敵キャラの半径
+		float radius = enemy_->GetRadius() + bullet->GetRadius();
 
-		//自キャラと敵弾の交差判定
+		//自弾と敵キャラの交差判定
 		if (distance <= radius) {
-			//自キャラの衝突時コールバックを呼び出す
-			player_->OnCollision();
-			//敵弾の衝突時コールバックを呼び出す
+			//敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			//自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 		}
 	}

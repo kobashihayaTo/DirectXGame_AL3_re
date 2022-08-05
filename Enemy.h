@@ -61,6 +61,9 @@ public:
 	//弾リストを追加
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
+	float GetRadius();
+
+	bool IsDead()const { return isDead_; }
 
 private:
 	///<summary>
@@ -72,6 +75,8 @@ private:
 	///離脱
 	/// </summary>
 	void LeaveVelocity();
+
+private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
@@ -99,4 +104,7 @@ private:
 
 	//半径
 	const float radius_ = 1.0f;
+
+	//デスフラグ
+	bool isDead_ = false;
 };
