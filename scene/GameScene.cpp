@@ -10,35 +10,7 @@
 
 #define PI 3.14
 
-GameScene::GameScene() {}
-
-GameScene::~GameScene() {
-	delete model_;
-	delete modelSkydome_;
-	//自キャラの解放
-	delete player_;
-	delete enemy_;
-}
-
-float GameScene::Angle(float angle)
-{
-	return angle * PI / 180;
-}
-
-
-
-float Clamp(float min, float max, float num) {
-	if (min > num) {
-		return min;
-	}
-	else if (max < num) {
-		return max;
-	}
-	return num;
-}
-
-void GameScene::Initialize() {
-
+GameScene::GameScene() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -55,7 +27,7 @@ void GameScene::Initialize() {
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1200, 720);
 
-		//ビュープロジェクションの初期化
+	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
 	//軸方向表示を有効にする
@@ -78,7 +50,7 @@ void GameScene::Initialize() {
 #pragma endregion
 
 	//レールカメラの生成
-	railCamera_ =std::make_unique<RailCamera>();
+	railCamera_ = std::make_unique<RailCamera>();
 	//レールカメラの生成
 	railCamera_->Initialize(Vector3(0.0f, 0.0f, -50.0f), Vector3(0.0f, 0.0f, 0.0f));
 
@@ -89,16 +61,50 @@ void GameScene::Initialize() {
 	skydome_->Initialize();
 }
 
+GameScene::~GameScene() {
+	delete model_;
+	delete modelSkydome_;
+	//自キャラの解放
+	delete player_;
+	delete enemy_;
+}
+
+float GameScene::Angle(float angle)
+{
+	return angle * PI / 180;
+}
+
+float Clamp(float min, float max, float num) {
+	if (min > num) {
+		return min;
+	}
+	else if (max < num) {
+		return max;
+	}
+	return num;
+}
+
+void GameScene::Initialize() {
+
+#pragma region キャラ 
+
+	//自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+
+	//敵キャラの初期化
+	enemy_->Initialize(model_, enemyHandle_);
+
+#pragma endregion
+
+	//レールカメラの生成
+	railCamera_->Initialize(Vector3(0.0f, 0.0f, -50.0f), Vector3(0.0f, 0.0f, 0.0f));
+	//シーン切り替え
+	Scene nextScene_ = Scene::GAME;
+
+}
+
 void GameScene::Update()
 {
-	if (input_->TriggerKey(DIK_B)) {
-		if (isDebugCameraActive_) {
-			isDebugCameraActive_ = false;
-		}
-		else {
-			isDebugCameraActive_ = true;
-		}
-	}
 	
 	if (isDebugCameraActive_) {
 		//デバッグカメラの更新
@@ -182,6 +188,7 @@ void GameScene::Draw() {
 
 void GameScene::CheckAllCollision()
 {
+
 	//判定対象AとBの座標
 	Vector3 posA, posB;
 
@@ -219,10 +226,9 @@ void GameScene::CheckAllCollision()
 #pragma region 自弾と敵キャラの当たり判定
 
 
-	//自キャラと敵弾全ての当たり判定
+	//自弾と敵キャラ全ての当たり判定
 	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets)
 	{
-
 		//自弾の座標
 		posB = bullet->GetWorldPosition();
 		//敵キャラの座標
@@ -233,16 +239,18 @@ void GameScene::CheckAllCollision()
 		float distance = MyMath::length(len);
 
 		//自弾と敵キャラの半径
-		float radius = enemy_->GetRadius() + bullet->GetRadius();
+		float radius = bullet->GetRadius()+enemy_->GetRadius();
 
 		//自弾と敵キャラの交差判定
 		if (distance <= radius) {
 			//敵キャラの衝突時コールバックを呼び出す
-			enemy_->OnCollision();
+   			enemy_->OnCollision();
 			//自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 		}
+	
 	}
+	
 #pragma endregion
 
 #pragma region 自弾と敵弾の当たり判定
@@ -270,4 +278,14 @@ void GameScene::CheckAllCollision()
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::SceneChange() {
+
+	if (player_->IsDead() || enemy_->IsDead()) {
+
+		nextScene_ = Scene::END;
+		isEnd_ = true;
+	}
+	
 }

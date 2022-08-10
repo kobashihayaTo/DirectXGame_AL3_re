@@ -15,6 +15,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 	//接近フェーズ初期化
 	ApproachPhaseInt();
+
+	Hp = 20;
 }
 
 void Enemy::Update() {
@@ -68,6 +70,11 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
 		bullet->Draw(viewProjection);
+	}
+	//----HPの表示----
+	if (Hp== 1)
+	{
+
 	}
 }
 
@@ -141,9 +148,16 @@ void Enemy::LeaveVelocity() {
 	worldTransform_.translation_ += LeaveVelocity_;
 }
 
-void Enemy::OnCollision() {
-	//デスフラグの立った
-	isDead_ = true;
+ void Enemy::OnCollision() {
+	
+ 	Hp--;
+
+	if (Hp <= 0)
+	{
+		//デスフラグの立った
+		isDead_ = true;
+	}
+
 }
 
 float Enemy::GetRadius() { return radius_; }

@@ -15,6 +15,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#include "Enum.h"
 
 
 /// <summary>
@@ -37,6 +38,8 @@ public:
 
 		kNumPartId
 	};
+
+
 
 public: // メンバ関数
   /// <summary>
@@ -70,7 +73,11 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollision();
 
+	Scene GetNextScene() { return nextScene_;}
 
+	int GetIsEnd() { return isEnd_; }
+
+	void SceneChange();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -93,7 +100,11 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	Enemy* enemy_ = nullptr;
+	//-----ここに敵リストを追加----
+	
 
+
+	//-----------------------------
 	Skydome* skydome_ = nullptr;
 
 	Model* modelSkydome_ = nullptr;
@@ -105,4 +116,8 @@ private: // メンバ変数
 
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	Scene nextScene_ = Scene::TITLE;
+
+	int isEnd_ = false;
 };

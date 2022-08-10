@@ -2,12 +2,16 @@
 
 void RailCamera::Initialize(const Vector3& position, const Vector3& rotation)
 {
+	//シングルトンインスタンスを取得する
+	input_ = Input::GetInstance();
 	//ワールドトランスフォームの初期設定
 	worldTransform_.translation_ = position;
 	worldTransform_.rotation_ = rotation;
 	//ビュープロジェクションの初期化
 	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
+
+
 }
 
 void RailCamera::Update()
@@ -61,13 +65,10 @@ void RailCamera::Update()
 
 void RailCamera::Rotation_(){
 
-	/*worldTransform_.rotation_.y -= 0.01f;*/
-
-	//if (input_->PushKey(DIK_A)) {
-	//	
-	//}
-	//else if (input_->PushKey(DIK_D)) {
-	//	worldTransform_.rotation_.y += 0.01f;
-	//}
-
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= 0.01f;
+	}
+	else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += 0.01f;
+	}
 }

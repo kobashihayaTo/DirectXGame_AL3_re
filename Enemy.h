@@ -49,12 +49,16 @@ public:
 	/// <param name="player"></param>
 	void SetPlayer(Player* player) { player_ = player; }
 
+	//衝突が起きたら呼び出されるコールバック変数
+	void OnCollision();
+
+	bool IsDead()const { return isDead_; }
+
 	/// <summary>
 	/// ワールド座標を所得
 	/// </summary>
 	Vector3 GetWorldPosition();
-	//衝突が起きたら呼び出されるコールバック変数
-	void OnCollision();
+	
 	//発射間隔
 	static const int kFireInterval = 30;
 
@@ -63,7 +67,7 @@ public:
 
 	float GetRadius();
 
-	bool IsDead()const { return isDead_; }
+	
 
 private:
 	///<summary>
@@ -107,4 +111,7 @@ private:
 
 	//デスフラグ
 	bool isDead_ = false;
+
+	//HPを表示
+	int Hp = 20;
 };

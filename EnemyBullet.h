@@ -8,7 +8,6 @@
 #include <cassert>
 class  EnemyBullet
 {
-	
 public:
 	///<summary>
    ///‰Šú‰»

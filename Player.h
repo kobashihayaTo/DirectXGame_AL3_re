@@ -52,6 +52,8 @@ public:
 	//衝突が起きたら呼び出されるコールバック変数
 	void OnCollision();	
 
+	bool IsDead()const { return isDead_; }
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
@@ -62,7 +64,6 @@ public:
 	/// 半径を所得
 	/// </summary>
 	float GetRadius();
-
 
 	//Vector3 SetRailCamera(RailCamera* camera) { camera_ = camera; }
 
@@ -92,4 +93,10 @@ private:
 	const float radius_ = 1.0f;
 
 	RailCamera* camera_ = nullptr;
+
+	//デスフラグ
+	bool isDead_ = false;
+
+	//HPを表示
+	int PlayerHp = 20;
 };
