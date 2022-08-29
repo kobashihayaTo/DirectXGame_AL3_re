@@ -1,3 +1,7 @@
+#include "TextureManager.h"
+#include "AxisIndicator.h"
+#include "PrimitiveDrawer.h"
+
 #include "EndScene.h"
 
 EndScene::EndScene(){}
@@ -9,11 +13,18 @@ void EndScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
-	nextScene_ = Scene::TITLE;
+	nextScene_ = Scene::END;
+
+	//ファイル名指定してテクスチャを読み込む
+	textureHandle_ = TextureManager::Load("END.png");
+
+	//スプライトの生成
+	sprite_ = Sprite::Create(textureHandle_, { 0,0 });
 }
 
 void EndScene::Update()
 {
+	endFlag_ = false;
 	if (input_->TriggerKey(DIK_W)) {
 		endFlag_ = true;
 		nextScene_ = Scene::TITLE;
@@ -59,7 +70,7 @@ void EndScene::Draw()
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	sprite_->Draw();
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
 	//

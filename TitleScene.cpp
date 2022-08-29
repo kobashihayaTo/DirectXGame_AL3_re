@@ -1,26 +1,38 @@
+#include "TextureManager.h"
+#include "AxisIndicator.h"
+#include "PrimitiveDrawer.h"
+
 #include "TitleScene.h"
 
 TitleScene::TitleScene(){}
 
-TitleScene::~TitleScene(){}
+TitleScene::~TitleScene(){
+	delete sprite_;
+}
 
 void TitleScene::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
-	nextScene_ = Scene::GAME;
+	nextScene_ = Scene::TITLE;
 
+	//ファイル名指定してテクスチャを読み込む
+	textureHandle_ = TextureManager::Load("Title.png");
+
+	//スプライトの生成
+	sprite_ = Sprite::Create(textureHandle_, { 0,0 });
+
+	
 }
 
 void TitleScene::Update()
 {
-	if (input_->TriggerKey(DIK_W)) {
+	changeFlag_ = false;
+	if (input_->TriggerKey(DIK_SPACE)) {
 		changeFlag_ = true;
 		nextScene_ = Scene::GAME;
 	}
-	debugText_->SetPos(50, 120);
-	debugText_->Printf("シーン(%d)", Scene::TITLE);
 }
 
 void TitleScene::Draw()
@@ -36,6 +48,7 @@ void TitleScene::Draw()
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -50,7 +63,7 @@ void TitleScene::Draw()
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 3Dモデル描画 
-
+	
 	// 3Dオブジェクト描画後処理
 	//Model::PostDraw();
 #pragma endregion
@@ -62,7 +75,7 @@ void TitleScene::Draw()
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	sprite_->Draw();
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
 	//

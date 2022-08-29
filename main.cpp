@@ -5,6 +5,7 @@
 #include "WinApp.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+
 #include "TitleScene.h"
 #include "EndScene.h"
 
@@ -22,14 +23,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	TitleScene* titleScene = nullptr;
 	EndScene* endScene = nullptr;
-	//----追加------
-	Scene scene = Scene::TITLE;
 
-	
+	//----追加------
+
+	Scene scene = Scene::TITLE;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow();
+	win->CreateGameWindow("LE2C_13_コバシ_ハヤト");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -68,9 +69,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//タイトルの初期化
 	titleScene = new TitleScene();
 	titleScene->Initialize();
+
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize();
+	
 	//エンドの初期化
 	endScene = new EndScene();
 	endScene->Initialize();
@@ -90,6 +93,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case Scene::TITLE :
 			titleScene->Update();
 			if (titleScene->GetChangeFlag()) {
+				gameScene->Reset();
 				scene = titleScene->GetNextScene();
 			}
 			break;
@@ -97,7 +101,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// ゲームシーンの毎フレーム処理
 			gameScene->Update();
 			if (gameScene->GetIsEnd()) {
-				scene = gameScene->GetNextScene();
+ 				scene = gameScene->GetNextScene();
 			}
 			break;
 		case Scene::END:
@@ -116,9 +120,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 描画開始
 		dxCommon->PreDraw();
-
-
-		
 
 		//---追加---
 		switch (scene)

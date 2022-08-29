@@ -13,7 +13,16 @@ class Player;
 
 enum class Phase{
 	Approach,//接近する
-	Leave,   //離脱する
+	 //次の行動にする
+	Leave,  
+	Y,
+	X,
+	YDown
+};
+
+enum class Break {
+	normal,
+	Damage
 };
 class Enemy
 {
@@ -43,6 +52,7 @@ public:
 	///接近フェーズ初期化
 	/// </summary>
 	void ApproachPhaseInt();
+
 	/// <summary>
 	/// プレイヤーのアドレスをセット
 	/// </summary>
@@ -67,18 +77,37 @@ public:
 
 	float GetRadius();
 
-	
+	int GetHp();
+
+	void Reset();
 
 private:
+
 	///<summary>
 	///接近
 	/// </summary>
 	void ApproachVelocity();
 
 	///<summary>
-	///離脱
+	///
 	/// </summary>
 	void LeaveVelocity();
+
+	///<summary>
+	///
+	/// </summary>
+	void YVelocity();
+
+	///<summary>
+	///
+	/// </summary>
+	void XVelocity();
+
+	///<summary>
+	///
+	/// </summary>
+	void YdownVelocity();
+
 
 private:
 	//ワールド変換データ
@@ -87,6 +116,8 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+	uint32_t hptextHandle = 0;
 	//デバック用表示
 	DebugText* debugText_ = nullptr;
 	Input* input_ = nullptr;
@@ -94,9 +125,17 @@ private:
 	Phase phase_ = Phase::Approach;
 
 	//速度
-	Vector3 ApproachVelocity_ = { 0,0,-0.1f };
-	Vector3 LeaveVelocity_ = { 0,0,-0.1f };
+	Vector3 ApproachVelocity_ =		{ 0,    0,-0.1f };
+	Vector3 LeaveVelocity_ =		{ -0.5f,0,   0 };
+	Vector3 YVelocity_ =			{ 0,   0.1f,  0 };
+	Vector3 XVelocity_ =			{ 0.5f,0,0 };
+	Vector3 YDown_ =				{0,-0.3f,0};
 
+	Vector3 Fastcoordinate = { 5,0,40 };
+
+	Vector3 move = { 0,0,0 };
+	float speed = 0.0f;
+	float Adjspeed = 0.3f;
 	//弾
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
 
@@ -113,5 +152,8 @@ private:
 	bool isDead_ = false;
 
 	//HPを表示
-	int Hp = 20;
+	int Hp_ = 20;
+
+	//スプライト
+	Sprite* sprite_ = nullptr;
 };

@@ -7,16 +7,16 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	//NULLポインタチェック
 	assert(model);
 	model_ = model;
-	textureHandle_ = TextureManager::Load("Red.png");
-
+	textureHandle_ = TextureManager::Load("Enemy.png");
+	
 	//引数で受け取った初期座標をセット
-	worldTransform_.translation_ = { 5,0,40 };
+	worldTransform_.translation_ = { Fastcoordinate };
 
 	worldTransform_.Initialize();
+
 	//接近フェーズ初期化
 	ApproachPhaseInt();
 
-	Hp = 20;
 }
 
 void Enemy::Update() {
@@ -33,8 +33,20 @@ void Enemy::Update() {
 	case Phase::Approach:
 		ApproachVelocity();
 		break;
+
 	case Phase::Leave:
 		LeaveVelocity();
+		break;
+
+	case Phase::Y:
+		YVelocity();
+		break;
+
+	case Phase::X:
+		XVelocity();
+		break;
+	case Phase::YDown:
+		YdownVelocity();
 		break;
 	}
 	worldTransform_.matWorld_ = MyMath::Identity();
@@ -56,25 +68,23 @@ void Enemy::Update() {
 
 void Enemy::Translation()
 {
-	Vector3 move = { 0,0,0 };
-	const float speed = 0.0003f;
+	move = { 0,0,0 };
+	speed = 0.03f;
 	move.z -= speed;
 
 	worldTransform_.translation_ += move;
+
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
+
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
 	//弾の描画
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
 		bullet->Draw(viewProjection);
-	}
-	//----HPの表示----
-	if (Hp== 1)
-	{
-
 	}
 }
 
@@ -128,7 +138,7 @@ void Enemy::ApproachVelocity() {
 	//発射タイマーカウントダウン
 	fileTimer--;
 	//指定時間に達した
-	if (fileTimer <= 0)
+	if (fileTimer <= -1)
 	{
 		//弾の発射
 		Fire();
@@ -137,27 +147,127 @@ void Enemy::ApproachVelocity() {
 	}
 	//移動(ベクトルを加算)
 	worldTransform_.translation_ += ApproachVelocity_;
-	//特定の位置に達したら離脱
+	//特定の位置に達したら
 	if (worldTransform_.translation_.z < -1.0f) {
 		phase_ = Phase::Leave;
 	}
 }
-//離脱フェーズ
+
+//移行フェーズ
 void Enemy::LeaveVelocity() {
+	move = { 0,0,0 };
+	speed = 0.03f;
+	move.z += speed;
+	//発射タイマーカウントダウン
+	fileTimer--;
+	//指定時間に達した
+	if (fileTimer <= -1)
+	{
+		//弾の発射
+		Fire();
+		//発射タイマーを初期化
+		fileTimer = kFireInterval;
+	}
 	//移動(ベクトルを加算)
+	worldTransform_.translation_ += move;
 	worldTransform_.translation_ += LeaveVelocity_;
+	//特定の位置に達したら
+	if (worldTransform_.translation_.x < -2.0f) {
+		phase_ = Phase::Y;
+	}
+}
+
+void Enemy::YVelocity()
+{
+	move = { 0,0,0 };
+	speed = 0.001f;
+	move.z -= speed;
+	//発射タイマーカウントダウン
+	fileTimer--;
+	//指定時間に達した
+	if (fileTimer <= -1)
+	{
+		//弾の発射
+		Fire();
+		//発射タイマーを初期化
+		fileTimer = kFireInterval;
+	}
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += move;
+	worldTransform_.translation_ += YVelocity_;
+	//特定の位置に達したら
+	if (worldTransform_.translation_.y >3.0f) {
+		phase_ = Phase::X;
+	}
+}
+
+void Enemy::XVelocity()
+{
+	move = { 0,0,0 };
+	speed = 0.001f;
+	move.z -= speed;
+	//発射タイマーカウントダウン
+	fileTimer--;
+	//指定時間に達した
+	if (fileTimer <= -1)
+	{
+		//弾の発射
+		Fire();
+		//発射タイマーを初期化
+		fileTimer = kFireInterval;
+	}
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += move;
+	worldTransform_.translation_ += XVelocity_;
+	//特定の位置に達したら
+	if (worldTransform_.translation_.x > 3.0f) {
+		phase_ = Phase::YDown;
+	}
+}
+
+void Enemy::YdownVelocity()
+{
+	move = { 0,0,0 };
+	speed = 0.001f;
+	move.z -= speed;
+	//発射タイマーカウントダウン
+	fileTimer--;
+	//指定時間に達した
+	if (fileTimer <= -1)
+	{
+		//弾の発射
+		Fire();
+		//発射タイマーを初期化
+		fileTimer = kFireInterval;
+	}
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += move;
+	worldTransform_.translation_ += YDown_;
+	//特定の位置に達したら
+	if (worldTransform_.translation_.y < -4.0f) {
+		phase_ = Phase::Leave;
+	}
 }
 
  void Enemy::OnCollision() {
-	
- 	Hp--;
 
-	if (Hp <= 0)
+	 Hp_--;
+
+	if (Hp_ <= 0)
 	{
 		//デスフラグの立った
-		isDead_ = true;
+ 		isDead_ = true;
 	}
-
 }
 
+ void Enemy::Reset() {
+	 fileTimer = 1;
+	 phase_ = Phase::Approach;
+	 worldTransform_.translation_ = { Fastcoordinate };
+	 Hp_ = 20;
+	 isDead_ = false;
+ }
+
 float Enemy::GetRadius() { return radius_; }
+
+int Enemy::GetHp() { return Hp_; }

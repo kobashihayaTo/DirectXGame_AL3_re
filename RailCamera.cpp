@@ -11,13 +11,12 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotation)
 	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
 
-
 }
 
 void RailCamera::Update()
 {
 	//移動速度
-	worldTransform_.translation_ += Vector3(0, 0, 0.01f);
+	worldTransform_.translation_ += Vector3(0, 0, 0.001f);
 	
 	//ワールドトランスフォームを更新
 	worldTransform_.matWorld_ = MyMath::Identity();
@@ -66,9 +65,15 @@ void RailCamera::Update()
 void RailCamera::Rotation_(){
 
 	if (input_->PushKey(DIK_A)) {
-		worldTransform_.rotation_.y -= 0.01f;
+		worldTransform_.rotation_.y -= 0.03f;
 	}
 	else if (input_->PushKey(DIK_D)) {
-		worldTransform_.rotation_.y += 0.01f;
+		worldTransform_.rotation_.y += 0.03f;
 	}
+}
+
+void RailCamera::Reset()
+{
+	worldTransform_.rotation_.z = 0.0f;
+	worldTransform_.rotation_.y = 0.0f;
 }

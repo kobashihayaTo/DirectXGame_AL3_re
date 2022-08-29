@@ -4,6 +4,7 @@
 #include "input.h"
 #include "DebugText.h"
 #include "ViewProjection.h"
+#include "Audio.h"
 
 #include <PlayerBullet.h>
 #include <MyMath.h>
@@ -65,19 +66,30 @@ public:
 	/// </summary>
 	float GetRadius();
 
+	/// <summary>
+	/// 初期化まとめ
+	/// </summary>
+	void Reset();
+
 	//Vector3 SetRailCamera(RailCamera* camera) { camera_ = camera; }
 
 	void SetParent(WorldTransform* worldTransform) {
 		worldTransform_.parent_ = worldTransform;
 	}
+
 private:
 
+	Audio* audio_ = nullptr;
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+	////サウンドハンドル
+	//uint32_t soundDataHandle_ = 0u;
+	
 	//自キャラ　
 	Player* player_ = nullptr;
 
@@ -99,4 +111,6 @@ private:
 
 	//HPを表示
 	int PlayerHp = 20;
+
+	Vector3 Fastcoordinate = { 0,0,0 };
 };

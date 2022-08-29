@@ -37,6 +37,8 @@ public:
 	/// </summary>
 	void Rotation_();
 
+	void Reset();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

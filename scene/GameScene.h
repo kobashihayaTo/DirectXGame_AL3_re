@@ -39,8 +39,6 @@ public:
 		kNumPartId
 	};
 
-
-
 public: // メンバ関数
   /// <summary>
   /// コンストクラタ
@@ -77,9 +75,24 @@ public: // メンバ関数
 
 	int GetIsEnd() { return isEnd_; }
 
+public:
+	/// <summary>
+	/// シーン切り替え
+	/// </summary>
 	void SceneChange();
 
+	/// <summary>
+	/// ダメージの加算減算
+	/// </summary>
+	void DamageCount();
+
+	/// <summary>
+	/// 初期化まとめ
+	/// </summary>
+	void Reset();
+
 private: // メンバ変数
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -89,8 +102,16 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 
 	//テクスチャバンドル
+
 	uint32_t textureHandle_ = 0;
 	uint32_t enemyHandle_ = 0;
+
+	uint32_t enemyhptextHandle = 0;
+	uint32_t playerhptextHandle = 0;
+
+	uint32_t keytextHandle = 0;
+
+	//uint32_t soundHandle_ = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
@@ -100,14 +121,13 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	Enemy* enemy_ = nullptr;
-	//-----ここに敵リストを追加----
 	
-
-
-	//-----------------------------
 	Skydome* skydome_ = nullptr;
 
 	Model* modelSkydome_ = nullptr;
+
+	Sprite* sprite_ = nullptr;
+	Sprite* keysprite_ = nullptr;
 
 	std::unique_ptr<RailCamera> railCamera_;
 
@@ -117,7 +137,9 @@ private: // メンバ変数
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 
-	Scene nextScene_ = Scene::TITLE;
+	Scene nextScene_ = Scene::GAME;
 
 	int isEnd_ = false;
+
+	float EnemyDamageCounter = 600.0f;
 };

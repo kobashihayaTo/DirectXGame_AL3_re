@@ -7,7 +7,10 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+
 #include "Enum.h"
+#include "Enemy.h"
+#include "GameScene.h"
 
 /// <summary>
 /// タイトルシーン
@@ -56,12 +59,19 @@ private:
 	//デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
 
+	Enemy* enemy_ = nullptr;
+
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 
 	Scene nextScene_ = Scene::TITLE;
 
 	int changeFlag_ = false;
+
+	//テクスチャバンドル
+	uint32_t textureHandle_ = 0;
+	//スプライト
+	Sprite* sprite_ = nullptr;
 };
 
 

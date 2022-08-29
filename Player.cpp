@@ -8,12 +8,12 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
 	//シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-
 	worldTransform_.translation_.z = 30;
-
 	worldTransform_.Initialize();
+
 }
 
 void Player::Update()
@@ -25,7 +25,7 @@ void Player::Update()
 		});
 
 	//キャラクターの移動ベクトル
-	Vector3 move = { 0,0,0 };
+	Vector3 move = { Fastcoordinate };
 
 	const float kCharacterSpeed = 0.2f;
 
@@ -68,15 +68,17 @@ void Player::Update()
 	//行列の再計算
 	worldTransform_.TransferMatrix();
 
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("Player;(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
 	//弾更新
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
 		bullet->Update();
 	}
+
+	debugText_->SetPos(20, 120);
+	debugText_->Printf(
+		"player:(%f,%f,%f)",worldTransform_.translation_.x,
+		worldTransform_.translation_.y,
+		worldTransform_.translation_.z);
 }
 
 void Player::Rotation()
@@ -110,6 +112,10 @@ void Player::Attack()
 
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
+
+		//soundDataHandle_ = audio_->LoadWave("shot.wav");
+
+		//audio_->PlayWave(soundDataHandle_,false,0.3f);
 	}
 }
 
@@ -139,7 +145,7 @@ Vector3 Player::GetWorldPosition()
 
 void Player::OnCollision(){
 
-	PlayerHp--;
+	/*PlayerHp--;*/
 
 	if (PlayerHp <= 0)
 	{
@@ -150,3 +156,10 @@ void Player::OnCollision(){
 }
 
 float Player::GetRadius() { return radius_; }
+
+void Player::Reset()
+{
+	Fastcoordinate = { 0,0,0 };
+	worldTransform_.translation_ = { 0,0,30 };
+	Vector3 move = { Fastcoordinate };
+}

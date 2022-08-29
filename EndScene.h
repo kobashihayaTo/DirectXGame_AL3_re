@@ -7,6 +7,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+
 #include "Enum.h"
 
 /// <summary>
@@ -62,5 +63,10 @@ private:
 	Scene nextScene_ = Scene::END;
 
 	int endFlag_ = false;
+
+	//テクスチャバンドル
+	uint32_t textureHandle_ = 0;
+	//スプライト
+	Sprite* sprite_ = nullptr;
 };
 
