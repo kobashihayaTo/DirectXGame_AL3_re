@@ -37,17 +37,20 @@ void PlayerBullet::Update()
 	{
 		isDead_ = true;
 	}
+
 }
 void PlayerBullet::Draw(const ViewProjection& viewProjection)
 {
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }
+
 void PlayerBullet::OnCollision()
 {
 	//デスフラグの立った
 	isDead_ = true;
 }
+
 Vector3 PlayerBullet::GetWorldPosition()
 {
 	//ワールド座標を入れる変数
@@ -60,4 +63,5 @@ Vector3 PlayerBullet::GetWorldPosition()
 	return worldPos;
 }
 float PlayerBullet::GetRadius() { return radius_; }
+
 

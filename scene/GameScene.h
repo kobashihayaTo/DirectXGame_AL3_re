@@ -109,8 +109,6 @@ private: // メンバ変数
 	uint32_t enemyhptextHandle = 0;
 	uint32_t playerhptextHandle = 0;
 
-	uint32_t keytextHandle = 0;
-
 	//uint32_t soundHandle_ = 0;
 	/// <summary>
 	/// ゲームシーン用
@@ -127,7 +125,7 @@ private: // メンバ変数
 	Model* modelSkydome_ = nullptr;
 
 	Sprite* sprite_ = nullptr;
-	Sprite* keysprite_ = nullptr;
+	Sprite* playersprite_ = nullptr;
 
 	std::unique_ptr<RailCamera> railCamera_;
 
@@ -142,4 +140,5 @@ private: // メンバ変数
 	int isEnd_ = false;
 
 	float EnemyDamageCounter = 600.0f;
+	float PlayerDamageCounter = 600.0f;
 };

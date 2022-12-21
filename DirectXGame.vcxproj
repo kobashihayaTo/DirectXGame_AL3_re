@@ -103,6 +103,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Manural.cpp" />
     <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="input\Input.h" />
+    <ClInclude Include="Manural.h" />
     <ClInclude Include="math\MathUtility.h" />
     <ClInclude Include="math\Matrix4.h" />
     <ClInclude Include="math\Vector2.h" />

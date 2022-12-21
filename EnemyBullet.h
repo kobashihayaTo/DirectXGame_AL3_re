@@ -36,6 +36,7 @@ public:
 
 	//衝突が起きたら呼び出されるコールバック変数
 	void OnCollision();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

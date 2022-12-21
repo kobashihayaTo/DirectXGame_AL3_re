@@ -8,6 +8,7 @@
 
 #include "TitleScene.h"
 #include "EndScene.h"
+#include "Manural.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -23,6 +24,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	TitleScene* titleScene = nullptr;
 	EndScene* endScene = nullptr;
+	Manural* manural = nullptr;
 
 	//----追加------
 
@@ -30,7 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow("LE2C_13_コバシ_ハヤト");
+	win->CreateGameWindow("ValleyShooting");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -70,6 +72,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	titleScene = new TitleScene();
 	titleScene->Initialize();
 
+
+	manural = new Manural();
+	manural->Initialize();
+
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize();
@@ -93,8 +99,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case Scene::TITLE :
 			titleScene->Update();
 			if (titleScene->GetChangeFlag()) {
-				gameScene->Reset();
+
 				scene = titleScene->GetNextScene();
+			}
+			break;
+		case Scene::MANUAL:
+			manural->Update();
+			if (manural->GetChangeFlag()) {
+
+				scene = manural->GetNextScene();
 			}
 			break;
 		case Scene::GAME:
@@ -107,6 +120,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case Scene::END:
 			endScene->Update();
 			if (endScene->GetEndFlag()) {
+				gameScene->Reset();
 				scene = endScene->GetNextScene();
 			}
 			break;
@@ -126,6 +140,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 		case Scene::TITLE:
 			titleScene->Draw();
+			break;
+		case Scene::MANUAL:
+			manural->Draw();
 			break;
 		case Scene::GAME:
 			// ゲームシーンの描画

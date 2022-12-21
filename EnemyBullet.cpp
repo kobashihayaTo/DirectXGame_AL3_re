@@ -50,6 +50,7 @@ void EnemyBullet::OnCollision()
 	//デスフラグの立った
 	isDead_ = true;
 }
+
 Vector3 EnemyBullet::GetWorldPosition()
 {
 	//ワールド座標を入れる変数

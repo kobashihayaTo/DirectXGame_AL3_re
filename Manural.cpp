@@ -2,40 +2,40 @@
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 
-#include "TitleScene.h"
+#include "Manural.h"
 
-TitleScene::TitleScene(){}
+Manural::Manural() {}
 
-TitleScene::~TitleScene(){
+Manural::~Manural() {
 	delete sprite_;
 }
 
-void TitleScene::Initialize()
+void Manural::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
-	nextScene_ = Scene::TITLE;
+	nextScene_ = Scene::MANUAL;
 
 	//ファイル名指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("Title.png");
+	textureHandle_ = TextureManager::Load("manual.png");
 
 	//スプライトの生成
 	sprite_ = Sprite::Create(textureHandle_, { 0,0 });
 
-	
+
 }
 
-void TitleScene::Update()
+void Manural::Update()
 {
 	changeFlag_ = false;
 	if (input_->TriggerKey(DIK_SPACE)) {
 		changeFlag_ = true;
-		nextScene_ = Scene::MANUAL;
+		nextScene_ = Scene::GAME;
 	}
 }
 
-void TitleScene::Draw()
+void Manural::Draw()
 {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -63,7 +63,7 @@ void TitleScene::Draw()
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 3Dモデル描画 
-	
+
 	// 3Dオブジェクト描画後処理
 	//Model::PostDraw();
 #pragma endregion

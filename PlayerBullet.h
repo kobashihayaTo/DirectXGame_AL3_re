@@ -15,7 +15,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	
-	void Initialize(Model* model, const Vector3& position,const Vector3& velocity);
+	void Initialize(Model* model, const Vector3& position,const Vector3& velocity); 
 
 	///<summary>
 	///更新
@@ -37,6 +37,7 @@ public:
 	/// 半径を所得
 	/// </summary>
 	float GetRadius();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

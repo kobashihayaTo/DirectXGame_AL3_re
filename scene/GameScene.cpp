@@ -68,8 +68,8 @@ GameScene::GameScene() {
 	sprite_ = Sprite::Create(enemyhptextHandle, { 0,0 });
 	sprite_->SetPosition({ 0,0 });
 
-	//keysprite_ = Sprite::Create(keytextHandle, { 0,0 });
-	//keysprite_->SetPosition({ 0,100 });
+	//playersprite_ = Sprite::Create(playerhptextHandle, { 0,0 });
+	//playersprite_->SetPosition({ 0,700 });
 }
 
 GameScene::~GameScene() {
@@ -185,7 +185,6 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	sprite_->Draw();
-
 	//keysprite_->Draw();
 	
 	// デバッグテキストの描画
@@ -384,6 +383,7 @@ void GameScene::DamageCount()
 	{
 		 EnemyDamageCounter = 30.0f;
 	}
+
 }
 
 void GameScene::Reset()

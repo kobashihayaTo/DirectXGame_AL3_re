@@ -266,6 +266,11 @@ void Enemy::YdownVelocity()
 	 worldTransform_.translation_ = { Fastcoordinate };
 	 Hp_ = 20;
 	 isDead_ = false;
+	 //íeçXêV
+	 for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
+	 {
+		 bullet->OnCollision();
+	 }
  }
 
 float Enemy::GetRadius() { return radius_; }

@@ -17,7 +17,7 @@ void Skydome::Initialize()
 void Skydome::Update(){}
 
 void Skydome::Draw(ViewProjection& viewprojection_)
-{
+{ 
 	//3Dƒ‚ƒfƒ‹ŠÖ”
 	model_->Draw(worldTransform_,viewprojection_);
 }

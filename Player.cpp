@@ -30,16 +30,16 @@ void Player::Update()
 	const float kCharacterSpeed = 0.2f;
 
 
-	if (input_->PushKey(DIK_RIGHT)) {
+	if (input_->PushKey(DIK_RIGHT)|| input_->PushKey(DIK_D)) {
 		move = { kCharacterSpeed,0,0 };
 	}
-	else if (input_->PushKey(DIK_LEFT)) {
+	else if (input_->PushKey(DIK_LEFT)|| input_->PushKey(DIK_A)) {
 		move = { -kCharacterSpeed,0,0 };
 	}
-	if (input_->PushKey(DIK_UP)) {
+	if (input_->PushKey(DIK_UP)|| input_->PushKey(DIK_W)) {
 		move = { 0,kCharacterSpeed,0 };
 	}
-	else if (input_->PushKey(DIK_DOWN)) {
+	else if (input_->PushKey(DIK_DOWN)|| input_->PushKey(DIK_S)) {
 		move = { 0,-kCharacterSpeed,0 };
 	}
 
@@ -74,11 +74,6 @@ void Player::Update()
 		bullet->Update();
 	}
 
-	debugText_->SetPos(20, 120);
-	debugText_->Printf(
-		"player:(%f,%f,%f)",worldTransform_.translation_.x,
-		worldTransform_.translation_.y,
-		worldTransform_.translation_.z);
 }
 
 void Player::Rotation()
@@ -145,7 +140,7 @@ Vector3 Player::GetWorldPosition()
 
 void Player::OnCollision(){
 
-	/*PlayerHp--;*/
+	//PlayerHp--;
 
 	if (PlayerHp <= 0)
 	{
@@ -162,4 +157,9 @@ void Player::Reset()
 	Fastcoordinate = { 0,0,0 };
 	worldTransform_.translation_ = { 0,0,30 };
 	Vector3 move = { Fastcoordinate };
+	//’e‚Ì•`‰æ
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
+	{
+		bullet->OnCollision();
+	}
 }

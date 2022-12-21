@@ -66,6 +66,8 @@ public:
 	/// </summary>
 	float GetRadius();
 
+	int GetHp();
+
 	/// <summary>
 	/// ‰Šú‰»‚Ü‚Æ‚ß
 	/// </summary>
@@ -110,7 +112,7 @@ private:
 	bool isDead_ = false;
 
 	//HP‚ğ•\¦
-	int PlayerHp = 20;
+	int PlayerHp = 40;
 
 	Vector3 Fastcoordinate = { 0,0,0 };
 };
